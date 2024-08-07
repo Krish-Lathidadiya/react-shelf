@@ -13,9 +13,9 @@ function Button({ className, buttonType, onClick, children }: ButtonProps) {
   const baseStyles = "text-sm px-4 py-2 rounded-md";
   const variantStyles =
     buttonType === "primary"
-      ? "border border-sky-500 bg-sky-500 text-white"
+      ? "border border-sky-500 bg-sky-500 hover:bg-sky-600 text-white"
       : buttonType === "secondary"
-      ? "bg-gray-500 text-black"
+      ? "border border-slate-200 text-slate-400 hover:border-slate-300 hover:bg-slate-50"
       : buttonType === "primary-transparent"
       ? "border border-sky-500 hover:bg-sky-500"
       : "";
