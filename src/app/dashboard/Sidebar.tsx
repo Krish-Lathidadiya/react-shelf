@@ -50,7 +50,7 @@ export default function Sidebar() {
     <div
       ref={menuRef}
       style={{ position: isMobileView ? "fixed" : "relative" }}
-      className={`sidebar-background h-auto pt-12 transition-all duration-300 ${
+      className={`sidebar-background  pt-12 transition-all duration-300 z-50 ${
         showSideBar ? "block" : "hidden"
       } ${openSideBar ? "w-[320px] p-6" : "w-[100px] p-4"}`}
     >

@@ -1,7 +1,7 @@
 import {
   Landslide as LandslideIcon,
   AddOutlined as AddOutlinedIcon,
-  AddModerator as AddModeratorIcon
+  AddModerator as AddModeratorIcon,
 } from "@mui/icons-material";
 import Button from "@/components/Common/Button";
 import { useAppContext } from "@/contexts/ContextApi";
@@ -27,7 +27,11 @@ export default function AllProjects() {
         </div>
         {/* New Project button */}
         {!isLoading && allProjects.length > 0 && (
-          <Button buttonType="primary" className="py-[2px] px-3" onClick={() => setOpenProjectWindow(true)}>
+          <Button
+            buttonType="primary"
+            className="py-[2px] px-3"
+            onClick={() => setOpenProjectWindow(true)}
+          >
             <AddOutlinedIcon fontSize="small" />
             <span className="text-[13px]">New Project</span>
           </Button>
@@ -47,7 +51,7 @@ export default function AllProjects() {
         <EmptyProjectsPlaceholder />
       ) : (
         <div className="flex flex-wrap gap-4 mt-7 mb-2 max-sm:grid max-sm:grid-cols-1">
-          {allProjects?.map((project, index) => (
+          {allProjects?.slice(0,10).map((project, index) => (
             <div key={index}>
               <SingleProject singleProject={project} />
             </div>
@@ -58,6 +62,15 @@ export default function AllProjects() {
   );
 }
 const SingleProject = ({ singleProject }: { singleProject: Project }) => {
+  const {
+    showComponentPageObject: { showComponentPage, setShowComponentPage },
+    selectedProjectObject:{setSelectedProject}
+  } = useAppContext();
+  const projectClicked = () => {
+    setShowComponentPage(true);
+    setSelectedProject(singleProject)
+  };
+
   return (
     <div className="w-[200px] border border-slate-100 rounded-md p-5 flex gap-2 justify-center  flex-col items-center max-sm:w-full">
       {/* The Icon */}
@@ -68,7 +81,10 @@ const SingleProject = ({ singleProject }: { singleProject: Project }) => {
 
       {/* Name and components count */}
       <div className="flex flex-col items-center justify-center">
-        <span className="font-bold text-lg cursor-pointer hover:text-sky-500 text-black select-none">
+        <span
+          onClick={projectClicked}
+          className="font-bold text-lg cursor-pointer hover:text-sky-500 text-black select-none"
+        >
           {singleProject.name}
         </span>
         <span className="text-[12px] text-slate-400 text-center">
@@ -82,7 +98,10 @@ const SingleProject = ({ singleProject }: { singleProject: Project }) => {
 const EmptyProjectsPlaceholder = () => {
   return (
     <div className="p-1 gap-5 flex flex-col justify-center h-[200px] mt-[68px] mb-[34px] items-center">
-      <AddModeratorIcon sx={{fontSize:80}} className="text-[70px] text-slate-200"/>
+      <AddModeratorIcon
+        sx={{ fontSize: 80 }}
+        className="text-[70px] text-slate-200"
+      />
       <div>
         <h3 className="font-semibold text-[15px] mb-1 text-center">{`There are no projects Yet...`}</h3>
         <p>Please click below to add you first project.</p>

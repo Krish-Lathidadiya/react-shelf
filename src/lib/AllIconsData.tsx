@@ -6,8 +6,9 @@ import {
   Category as CategoryIcon,
 } from "@mui/icons-material";
 
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { IconsData } from "./AllIconsArray";
+import { useAppContext } from "@/contexts/ContextApi";
 
 export default function AllIconsData({
   allIconsState,
@@ -16,6 +17,10 @@ export default function AllIconsData({
   allIconsState: IconsData[];
   setAllIconsState: React.Dispatch<React.SetStateAction<IconsData[]>>;
 }) {
+  const {
+    selectedProjectObject: { selectedProject },
+    openIconWindowObject: { openIconWindow },
+  } = useAppContext();
   // Memoize the handleClickedIcon function
   const handleClickedIcon = useCallback(
     (singleIcon: IconsData) => {
@@ -28,6 +33,17 @@ export default function AllIconsData({
     },
     [setAllIconsState]
   );
+
+  useEffect(() => {
+    if (selectedProject) {
+      setAllIconsState((prevState) =>
+        prevState.map((icon) => ({
+          ...icon,
+          isSelected: icon.name === selectedProject?.icon,
+        }))
+      );
+    }
+  }, [openIconWindow]); //Dependency on selectedProject only
 
   return (
     <div className="flex flex-wrap gap-2 text-sky-500 p-3">

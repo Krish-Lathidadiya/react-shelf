@@ -14,8 +14,6 @@ export default function IconWindow({
     openIconWindowObject: { openIconWindow, setOpenIconWindow },
   } = useAppContext();
 
-  console.log("openIconWindow", openIconWindow);
-
   const [allIconsState, setAllIconsState] =
     useState<IconsData[]>(AllIconsArray);
 
@@ -23,7 +21,7 @@ export default function IconWindow({
     <div
       className={`${openIconWindow ? "absolute" : "hidden"} ${
         isMobileView ? "w-[80%]" : "w-[40%]"
-      } h-[490px]  bg-white rounded-lg shadow-md left-1/2  top-20 -translate-x-1/2 z-50`}
+      } h-[490px]  bg-white rounded-lg shadow-md left-1/2  top-20 -translate-x-1/2 z-[999]`}
     >
       {/* Header */}
       <div className="flex justify-between items-center pt-7 px-7 mb-8">

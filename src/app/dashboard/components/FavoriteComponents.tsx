@@ -5,7 +5,7 @@ import {
 } from "@mui/icons-material";
 import Button from "@/components/Common/Button";
 import { useAppContext } from "@/contexts/ContextApi";
-import { Component } from "@/lib/allData";
+import { Component,Project } from "@/lib/allData";
 import moment from "moment";
 import { CircularProgress } from "@mui/material";
 
@@ -13,6 +13,8 @@ export default function FavoriteComponents() {
   const {
     allFavoritesComponentsObject: { allFavoritesComponents },
     isLoadingObject: { isLoading },
+    openComponentEditorObject: { setOpenComponentEditor },
+    selectedComponentObject: { setSelectedComponent },
   } = useAppContext();
 
   return (
@@ -72,15 +74,37 @@ export default function FavoriteComponents() {
 }
 
 const SingleFavoriteComponent = ({ component }: { component: Component }) => {
+  const {
+    openComponentEditorObject: { setOpenComponentEditor },
+    selectedComponentObject: { setSelectedComponent },
+    allProjectsObject: { allProjects, setAllProjects },
+    selectedProjectObject: { setSelectedProject },
+    openDeleteWindowObject: { setOpenDeleteWindow },
+  } = useAppContext();
+
+
+
+
   return (
     <div className="grid grid-cols-4 gap-4 text-sm items-center rounded-lg p-2 max-sm:grid-cols-2">
       {/* Component Name */}
-      <span className="hover:text-sky-500 text-black cursor-pointer">
+      <span
+          onClick={()=>
+            openComponent({
+              component,
+              allProjects,
+              setSelectedComponent,
+              setOpenComponentEditor,
+              setSelectedProject,
+            })
+          }
+        className="hover:text-sky-500 text-black cursor-pointer"
+      >
         {component?.name}
       </span>
       {/* Component Date */}
       <div className="max-sm:hidden text-black">
-        {moment(component?.createdAt).format("LL")}
+        {moment(component?.createdAt).format("YYYY-MM-DD HH:mm:ss")}
       </div>
       {/* Project */}
       <span className="justify-self-start max-sm:hidden">
@@ -92,13 +116,98 @@ const SingleFavoriteComponent = ({ component }: { component: Component }) => {
       {/* Actions button */}
       <div className="flex gap-2">
         {/* Modify Button */}
-        <div className="bg-sky-500 rounded-full w-7 h-7 flex items-center justify-center hover:bg-sky-600 cursor-pointer">
-          <EditIcon fontSize="small" className="text-white text-[13px]" />
+        <div 
+        onClick={()=>
+          openComponent({
+            component,
+            allProjects,
+            setSelectedComponent,
+            setOpenComponentEditor,
+            setSelectedProject,
+          })
+        }
+        className="bg-sky-500 rounded-full w-7 h-7 flex items-center justify-center hover:bg-sky-600 cursor-pointer">
+          <EditIcon
+            fontSize="small"
+            className="text-white text-[13px]"
+          />
         </div>
-        <div className="bg-sky-500 rounded-full w-7 h-7 flex items-center justify-center hover:bg-sky-600 cursor-pointer">
-          <DeleteIcon fontSize="small" className="text-white text-[13px]" />
+        <div 
+        onClick={()=>
+          openTheDeleteWindow({
+            component,
+            allProjects,
+            setSelectedComponent,
+            setSelectedProject,
+            setOpenDeleteWindow,
+          })
+        }
+        className="bg-sky-500 rounded-full w-7 h-7 flex items-center justify-center hover:bg-sky-600 cursor-pointer">
+          <DeleteIcon
+            // onClick={openTheDeleteWindow}
+            fontSize="small"
+            className="text-white text-[13px]"
+          />
         </div>
       </div>
     </div>
   );
+};
+
+
+export const openTheDeleteWindow = ({
+  component,
+  allProjects,
+  setSelectedComponent,
+  setSelectedProject,
+  setOpenDeleteWindow,
+}: {
+  component: Component;
+  allProjects: Project[];
+  setSelectedComponent: (component: Component) => void;
+  setSelectedProject: (project: Project) => void;
+  setOpenDeleteWindow: (open: boolean) => void;
+}) => {
+  // Get the project and set it in the selectedProject state
+  const project = allProjects.find(
+    (project) =>
+      project.name.toLowerCase() === component.projectName.toLowerCase()
+  );
+  if (project) {
+    setSelectedProject(project);
+  } else {
+    console.log("Project not found for component " + component.name);
+  }
+  setSelectedComponent(component);
+  setOpenDeleteWindow(true);
+};
+
+export const openComponent = ({
+  component,
+  allProjects,
+  setSelectedComponent,
+  setOpenComponentEditor,
+  setSelectedProject,
+}:{
+  component:Component,
+  allProjects:Project[],
+  setSelectedComponent:React.Dispatch<React.SetStateAction<Component | null>>;
+  setOpenComponentEditor:React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedProject:React.Dispatch<React.SetStateAction<Project | null>>;
+}) => {
+  // Scroll to the top of the page or the component editor
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  setSelectedComponent(component);
+  setOpenComponentEditor(true);
+  //Get the proejct and set it in the selectedProject state
+  const project = allProjects.find(
+    (project) =>
+      project.name.toLowerCase() == component.projectName.toLowerCase()
+  );
+
+  if (project) {
+    setSelectedProject(project);
+  } else {
+    console.log("Project not found for component " + component.name);
+  }
 };

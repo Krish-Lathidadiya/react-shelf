@@ -6,6 +6,7 @@ import React, {
   ReactNode,
   useContext,
   useEffect,
+  SetStateAction,
 } from "react";
 import {
   Category,
@@ -28,6 +29,20 @@ export type DarkModeMenu = {
   name: string;
   icon: ReactNode;
   isSelected: boolean;
+};
+
+type DropDownPositionType = {
+  left: number;
+  top: number;
+};
+
+type SortingOptionsType = {
+  category: string;
+  options: {
+    label: string;
+    value: string;
+    selected: boolean;
+  }[];
 };
 
 type AppContextType = {
@@ -81,6 +96,84 @@ type AppContextType = {
     openIconWindow: boolean;
     setOpenIconWindow: React.Dispatch<React.SetStateAction<boolean>>;
   };
+  showComponentPageObject: {
+    showComponentPage: boolean;
+    setShowComponentPage: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+  selectedProjectObject: {
+    selectedProject: Project | null;
+    setSelectedProject: React.Dispatch<React.SetStateAction<Project | null>>;
+  };
+  dropDownPositionObject: {
+    dropDownPosition: DropDownPositionType;
+    setDropDownPosition: React.Dispatch<
+      React.SetStateAction<DropDownPositionType>
+    >;
+  };
+  openDropDownObject: {
+    openDropDown: boolean;
+    setOpenDropDown: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+  openDeleteWindowObject: {
+    openDeleteWindow: boolean;
+    setOpenDeleteWindow: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+  selectedComponentObject: {
+    selectedComponent: Component | null;
+    setSelectedComponent: React.Dispatch<
+      React.SetStateAction<Component | null>
+    >;
+  };
+  openComponentEditorObject: {
+    openComponentEditor: boolean;
+    setOpenComponentEditor: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+  openAllProjectsWindowObject: {
+    openAllProjectsWindow: boolean;
+    setOpenAllProjectsWindow: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+  openSortingDropDownObject: {
+    openSortingDropDown: boolean;
+    setOpenSortingDropDown: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+  sortingDropDownPositionsObject: {
+    sortingDropDownPositions: DropDownPositionType;
+    setSortingDropDownPositions: React.Dispatch<
+      React.SetStateAction<DropDownPositionType>
+    >;
+  };
+  sortedProjectsObject: {
+    sortedProjects: Project[];
+    setSortedProjects: React.Dispatch<React.SetStateAction<Project[]>>;
+  };
+  sortingOptionsObject: {
+    sortingOptions: SortingOptionsType[];
+    setSortingOptions: React.Dispatch<
+      React.SetStateAction<SortingOptionsType[]>
+    >;
+  };
+  openAllFavoriteComponentsObject: {
+    openAllFavoriteComponentsWindow: boolean;
+    setOpenAllFavoriteComponentsWindow: React.Dispatch<
+      React.SetStateAction<boolean>
+    >;
+  };
+  openFilterDropDownObject: {
+    openFilterDropDown: boolean;
+    setOpenFilterDropDown: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+  filterDropDownPositionObject: {
+    filterDropDownPositions: DropDownPositionType;
+    setFilterDropDownPositions: React.Dispatch<
+      React.SetStateAction<DropDownPositionType>
+    >;
+  };
+  selectedProjectToFilterObject: {
+    selectedProjectToFilter: string | null;
+    setSelectedProjectToFilter: React.Dispatch<
+      React.SetStateAction<string | null>
+    >;
+  };
 };
 
 const defaultState: AppContextType = {
@@ -131,6 +224,70 @@ const defaultState: AppContextType = {
   openIconWindowObject: {
     openIconWindow: false,
     setOpenIconWindow: () => {},
+  },
+  showComponentPageObject: {
+    showComponentPage: false,
+    setShowComponentPage: () => {},
+  },
+  selectedProjectObject: {
+    selectedProject: null,
+    setSelectedProject: () => {},
+  },
+  dropDownPositionObject: {
+    dropDownPosition: { left: 0, top: 0 },
+    setDropDownPosition: () => {},
+  },
+  openDropDownObject: {
+    openDropDown: false,
+    setOpenDropDown: () => {},
+  },
+  openDeleteWindowObject: {
+    openDeleteWindow: false,
+    setOpenDeleteWindow: () => {},
+  },
+  selectedComponentObject: {
+    selectedComponent: null,
+    setSelectedComponent: () => {},
+  },
+  openComponentEditorObject: {
+    openComponentEditor: false,
+    setOpenComponentEditor: () => {},
+  },
+  openAllProjectsWindowObject: {
+    openAllProjectsWindow: false,
+    setOpenAllProjectsWindow: () => {},
+  },
+  openSortingDropDownObject: {
+    openSortingDropDown: false,
+    setOpenSortingDropDown: () => {},
+  },
+  sortingDropDownPositionsObject: {
+    sortingDropDownPositions: { top: 0, left: 0 },
+    setSortingDropDownPositions: () => {},
+  },
+  sortedProjectsObject: {
+    sortedProjects: [],
+    setSortedProjects: () => {},
+  },
+  sortingOptionsObject: {
+    sortingOptions: [],
+    setSortingOptions: () => {},
+  },
+  openAllFavoriteComponentsObject: {
+    openAllFavoriteComponentsWindow: false,
+    setOpenAllFavoriteComponentsWindow: () => {},
+  },
+  openFilterDropDownObject: {
+    openFilterDropDown: false,
+    setOpenFilterDropDown: () => {},
+  },
+  filterDropDownPositionObject: {
+    filterDropDownPositions: { left: 0, top: 0 },
+    setFilterDropDownPositions: () => {},
+  },
+  selectedProjectToFilterObject: {
+    selectedProjectToFilter: null,
+    setSelectedProjectToFilter: () => {},
   },
 };
 
@@ -186,6 +343,61 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [openProjectWindow, setOpenProjectWindow] = useState(false);
   const [openIconWindow, setOpenIconWindow] = useState(false);
+  const [showComponentPage, setShowComponentPage] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [selectedComponent, setSelectedComponent] = useState<Component | null>(
+    null
+  );
+  const [dropDownPosition, setDropDownPosition] = useState({
+    left: 0,
+    top: 0,
+  });
+  const [openDropDown, setOpenDropDown] = useState(false);
+  const [openDeleteWindow, setOpenDeleteWindow] = useState(false);
+  const [openComponentEditor, setOpenComponentEditor] = useState(false);
+  const [openAllProjectsWindow, setOpenAllProjectsWindow] = useState(false);
+  // sorting drop down
+  const [openSortingDropDown, setOpenSortingDropDown] = useState(false);
+  const [sortingDropDownPositions, setSortingDropDownPositions] = useState({
+    left: 0,
+    top: 0,
+  });
+  const [sortedProjects, setSortedProjects] = useState<Project[]>([]);
+
+  const [sortingOptions, setSortingOptions] = useState<SortingOptionsType[]>(
+    () => {
+      const savedState = localStorage.getItem("sortingOptions");
+      return savedState
+        ? JSON.parse(savedState)
+        : [
+            {
+              category: "Order",
+              options: [
+                { label: "A-Z", value: "asc", selected: true },
+                { label: "Z-A", value: "desc", selected: false },
+              ],
+            },
+            {
+              category: "Date",
+              options: [
+                { label: "Newest", value: "newest", selected: false },
+                { label: "Oldest", value: "oldest", selected: false },
+              ],
+            },
+          ];
+    }
+  );
+
+  const [openAllFavoriteComponentsWindow, setOpenAllFavoriteComponentsWindow] =
+    useState(false);
+  const [openFilterDropDown, setOpenFilterDropDown] = useState(false);
+  const [filterDropDownPositions, setFilterDropDownPositions] = useState({
+    left: 0,
+    top: 0,
+  });
+  const [selectedProjectToFilter, setSelectedProjectToFilter] = useState<
+    string | null
+  >(null);
 
   //set isMobileView
   useEffect(() => {
@@ -199,18 +411,30 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     return () => window.removeEventListener("resize", handleResize); // Cleanup on unmount
   }, []);
 
-  //fetch all projects using setTimeout
+  //Simulate the fetch using setTimeout
   useEffect(() => {
     const fetchAllProjects = () => {
       setTimeout(() => {
+        // Sort all the components in the allProjects by createdAt
+        allProjectsData.forEach((project) => {
+          project.components.sort((a, b) => {
+            return (
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            );
+          });
+        });
+
+        // Update the all Projects
         setAllProjects(allProjectsData);
+        setSortedProjects(allProjectsData);
+        // set Loading to false
         setIsLoading(false);
-      }, 2000);
+      }, 3000);
     };
     fetchAllProjects();
   }, []);
 
-  //filter all favorite components
+  //update favorite components whe allProjects chages
   useEffect(() => {
     if (allProjects.length > 0) {
       const favoriteComponents = allProjects.flatMap((project) =>
@@ -259,6 +483,23 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       );
     }
   }, [darkModeMenu]);
+
+  // update drop down when menu item is selected
+  useEffect(() => {
+    if (menuItems[0].isSelected) {
+      setSelectedProject(null);
+      setShowComponentPage(false);
+    }
+    if (menuItems[1].isSelected) {
+      setOpenAllProjectsWindow(true);
+      setSelectedProject(null);
+      setShowComponentPage(false);
+    }
+    if (menuItems[2].isSelected) {
+      setOpenAllFavoriteComponentsWindow(true);
+      setShowComponentPage(false);
+    }
+  }, [menuItems]);
 
   return (
     <AppContext.Provider
@@ -310,6 +551,70 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         openIconWindowObject: {
           openIconWindow,
           setOpenIconWindow,
+        },
+        showComponentPageObject: {
+          showComponentPage,
+          setShowComponentPage,
+        },
+        selectedProjectObject: {
+          selectedProject,
+          setSelectedProject,
+        },
+        dropDownPositionObject: {
+          dropDownPosition,
+          setDropDownPosition,
+        },
+        openDropDownObject: {
+          openDropDown,
+          setOpenDropDown,
+        },
+        openDeleteWindowObject: {
+          openDeleteWindow,
+          setOpenDeleteWindow,
+        },
+        selectedComponentObject: {
+          selectedComponent,
+          setSelectedComponent,
+        },
+        openComponentEditorObject: {
+          openComponentEditor,
+          setOpenComponentEditor,
+        },
+        openAllProjectsWindowObject: {
+          openAllProjectsWindow,
+          setOpenAllProjectsWindow,
+        },
+        openSortingDropDownObject: {
+          openSortingDropDown,
+          setOpenSortingDropDown,
+        },
+        sortingDropDownPositionsObject: {
+          sortingDropDownPositions,
+          setSortingDropDownPositions,
+        },
+        sortedProjectsObject: {
+          sortedProjects,
+          setSortedProjects,
+        },
+        sortingOptionsObject: {
+          sortingOptions,
+          setSortingOptions,
+        },
+        openAllFavoriteComponentsObject: {
+          openAllFavoriteComponentsWindow,
+          setOpenAllFavoriteComponentsWindow,
+        },
+        openFilterDropDownObject: {
+          openFilterDropDown,
+          setOpenFilterDropDown,
+        },
+        filterDropDownPositionObject: {
+          filterDropDownPositions,
+          setFilterDropDownPositions,
+        },
+        selectedProjectToFilterObject: {
+          selectedProjectToFilter,
+          setSelectedProjectToFilter,
         },
       }}
     >
